@@ -6,10 +6,12 @@ import { exclude } from "@/utils/prisma-utils";
 import { Address, Enrollment } from "@prisma/client";
 
 async function getAddressFromCEP(cep: string) {
-  const result = await request.get("https://viacep.com.br/ws/37440000/json/");
-
-  if (!result.data) {
+  const result = await request.get(`https://viacep.com.br/ws/${cep}/json/`);
+  if (!result.data || result.data.erro) {
     throw notFoundError();
+  } else {
+    const { bairro, localidade: cidade, complemento, logradouro, uf } = result.data;
+    return { bairro, cidade, complemento, logradouro, uf };
   }
 }
 
@@ -41,7 +43,7 @@ async function createOrUpdateEnrollmentWithAddress(params: CreateOrUpdateEnrollm
   const enrollment = exclude(params, "address");
   const address = getAddressForUpsert(params.address);
 
-  //TODO - Verificar se o CEP é válido
+  await this.getAddressFromCEP(params.address.cep);
   const newEnrollment = await enrollmentRepository.upsert(params.userId, enrollment, exclude(enrollment, "userId"));
 
   await addressRepository.upsert(newEnrollment.id, address, address);
