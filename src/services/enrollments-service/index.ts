@@ -4,13 +4,14 @@ import addressRepository, { CreateAddressParams } from "@/repositories/address-r
 import enrollmentRepository, { CreateEnrollmentParams } from "@/repositories/enrollment-repository";
 import { exclude } from "@/utils/prisma-utils";
 import { Address, Enrollment } from "@prisma/client";
+import { ViaCEPAddress } from "@/protocols.js";
 
 async function getAddressFromCEP(cep: string) {
   const result = await request.get(`https://viacep.com.br/ws/${cep}/json/`);
   if (!result.data || result.data.erro) {
     throw notFoundError();
   } else {
-    const { bairro, localidade: cidade, complemento, logradouro, uf } = result.data;
+    const { bairro, localidade: cidade, complemento, logradouro, uf }: ViaCEPAddress = result.data;
     return { bairro, cidade, complemento, logradouro, uf };
   }
 }
