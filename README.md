@@ -20,7 +20,7 @@ npm i
 5. Run all migrations
 
 ```bash
-npm run dev:migration:run
+npm run migration:run
 ```
 
 6. Seed db
@@ -29,7 +29,7 @@ npm run dev:migration:run
 npm run dev:seed
 ```
 
-7. Run the back-end in a development environment:
+6. Run the back-end in a development environment:
 
 ```bash
 npm run dev
@@ -38,20 +38,14 @@ npm run dev
 ## How to run tests
 
 1. Follow the steps in the last section
-2. Configure the `.env.test` file using the `.env.example` file (see "Running application locally or inside docker" section for details)
-3. Run all migrations
+1. Configure the `.env.test` file using the `.env.example` file (see "Running application locally or inside docker" section for details)
+1. Run all migrations
 
 ```bash
-npm run test:migration:run
+npm run migration:run
 ```
 
-4.  Seed db
-
-```bash
-npm run test:seed
-```
-
-5. Run test:
+3. Run test:
    (locally)
 
 ```bash

@@ -37,7 +37,7 @@ function joiCpfValidation(value: string, helpers: Joi.CustomHelpers<string>) {
   return value;
 }
 
-async function JoiCepValidation(value: string, helpers: Joi.CustomHelpers<string>) {
+function JoiCepValidation(value: string, helpers: Joi.CustomHelpers<string>) {
   if (!value) return value;
 
   if (!isValidCEP(value)) {
