@@ -25,4 +25,5 @@ function validate(schema: ObjectSchema, type: "body" | "params") {
   };
 }
 
+// eslint-disable-next-line @typescript-eslint/type-annotation-spacing
 type ValidationMiddleware = (req: Request, res: Response, next: NextFunction) => void;
