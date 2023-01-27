@@ -4,11 +4,14 @@ import { Payment } from "@prisma/client";
 import { Request, Response } from "express";
 import httpStatus from "http-status";
 
-export async function postPayment(req: Request, res: Response): Promise<Response<Payment>> {
+export async function postPayment(req: AuthenticatedRequest, res: Response): Promise<Response<Payment>> {
+  const { userId } = req;
   try {
-    const payment = paymentService.postPayment(req.body);
-    return res.status(httpStatus.CREATED).send(payment);
+    const payment = await paymentService.postPayment(req.body, userId);
+    return res.status(httpStatus.OK).send(payment);
   } catch (error) {
+    if (error.message === "Unauthorized") return res.sendStatus(httpStatus.UNAUTHORIZED);
+    if (error.message === "NOT_FOUND") return res.sendStatus(httpStatus.NOT_FOUND);
     return res.sendStatus(httpStatus.NOT_FOUND);
   }
 }
@@ -18,11 +21,12 @@ export async function getPayment(req: AuthenticatedRequest, res: Response): Prom
   const { ticketId } = req.query;
   if (!ticketId || isNaN(Number(ticketId))) return res.sendStatus(httpStatus.BAD_REQUEST);
   try {
-    const payment = paymentService.getPayment(Number(ticketId), userId);
-    if (!Object.keys(payment)) return res.sendStatus(httpStatus.NOT_FOUND);
+    const payment = await paymentService.getPayment(Number(ticketId), userId);
+    if (!payment) return res.sendStatus(httpStatus.NO_CONTENT);
     return res.status(httpStatus.OK).send(payment);
   } catch (error) {
-    if (error === "Unauthorized") return res.sendStatus(401);
-    return res.sendStatus(httpStatus.NOT_FOUND);
+    if (error.message === "Unauthorized") return res.sendStatus(httpStatus.UNAUTHORIZED);
+    if (error.message === "NOT_FOUND") return res.sendStatus(httpStatus.NOT_FOUND);
+    return res.sendStatus(httpStatus.BAD_REQUEST);
   }
 }

@@ -34,7 +34,15 @@ function createPayment(body: PaymentRequestBody, value: number): Promise<Payment
       ticketId: body.ticketId,
       value,
       cardIssuer: body.cardData.issuer,
-      cardLastDigits: `${body.cardData.number}`.slice(-3),
+      cardLastDigits: `${body.cardData.number}`.slice(-4),
+    },
+  });
+}
+
+function verifyTicketExistence(ticketId: number): Promise<Ticket> {
+  return prisma.ticket.findUnique({
+    where: {
+      id: ticketId,
     },
   });
 }
@@ -62,6 +70,7 @@ const paymentsRepository = {
   getTicketValue,
   updateTicketPaidStatus,
   createPayment,
+  verifyTicketExistence,
   verifyUserTicketOwnership,
   getPayment,
 };
