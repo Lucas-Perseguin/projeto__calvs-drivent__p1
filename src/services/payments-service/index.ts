@@ -8,8 +8,15 @@ async function postPayment(body: PaymentRequestBody): Promise<Payment> {
   return await paymentsRepository.createPayment(body, value.TicketType.price);
 }
 
+async function getPayment(ticketId: number, userId: number): Promise<Payment> {
+  const ticket = await paymentsRepository.verifyUserTicketOwnership(ticketId, userId);
+  if (!Object.keys(ticket)) throw new Error("Unauthorized");
+  return await paymentsRepository.getPayment(ticketId);
+}
+
 const paymentService = {
   postPayment,
+  getPayment,
 };
 
 export default paymentService;

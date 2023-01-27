@@ -17,7 +17,7 @@ function getTicketValue(ticketId: number): Promise<{ TicketType: { price: number
   });
 }
 
-async function updateTicketPaidStatus(ticketId: number): Promise<Ticket> {
+function updateTicketPaidStatus(ticketId: number): Promise<Ticket> {
   return prisma.ticket.update({
     where: {
       id: ticketId,
@@ -39,10 +39,31 @@ function createPayment(body: PaymentRequestBody, value: number): Promise<Payment
   });
 }
 
+function verifyUserTicketOwnership(ticketId: number, userId: number): Promise<Ticket> {
+  return prisma.ticket.findFirst({
+    where: {
+      id: ticketId,
+      Enrollment: {
+        userId,
+      },
+    },
+  });
+}
+
+function getPayment(ticketId: number): Promise<Payment> {
+  return prisma.payment.findFirst({
+    where: {
+      ticketId,
+    },
+  });
+}
+
 const paymentsRepository = {
   getTicketValue,
   updateTicketPaidStatus,
   createPayment,
+  verifyUserTicketOwnership,
+  getPayment,
 };
 
 export default paymentsRepository;
