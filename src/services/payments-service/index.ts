@@ -1,5 +1,5 @@
-import { PaymentRequestBody } from "@/protocols.js";
-import paymentsRepository from "@/repositories/payments-repository/index.js";
+import { PaymentRequestBody } from "@/protocols";
+import paymentsRepository from "@/repositories/payments-repository";
 import { Payment } from "@prisma/client";
 
 async function postPayment(body: PaymentRequestBody): Promise<Payment> {
