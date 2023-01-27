@@ -1,7 +1,7 @@
-import { getTicketTypes, getUserTicket, postTicket } from "@/controllers/tickets-controller";
-import { authenticateToken } from "@/middlewares/authentication-middleware";
-import { validateBody } from "@/middlewares/validation-middleware";
-import { CreateTicketSchema } from "@/schemas/tickets-schemas";
+import { getTicketTypes, getUserTicket, postTicket } from "@/controllers";
+import { authenticateToken } from "@/middlewares";
+import { validateBody } from "@/middlewares";
+import { CreateTicketSchema } from "@/schemas";
 import { Router } from "express";
 
 const ticketsRouter = Router();

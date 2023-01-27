@@ -1,5 +1,5 @@
-import { AuthenticatedRequest } from "@/middlewares/authentication-middleware";
-import ticketsService from "@/services/tickets-service/index";
+import { AuthenticatedRequest } from "@/middlewares";
+import ticketsService from "@/services/tickets-service";
 import { Ticket, TicketType } from "@prisma/client";
 import { Request, Response } from "express";
 import httpStatus from "http-status";

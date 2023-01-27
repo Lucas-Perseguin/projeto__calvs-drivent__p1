@@ -1,4 +1,4 @@
-import ticketsRepository from "@/repositories/tickets-repository/index";
+import ticketsRepository from "@/repositories/tickets-repository";
 import { Ticket, TicketType } from "@prisma/client";
 
 async function getTicketTypes(): Promise<TicketType[]> {
