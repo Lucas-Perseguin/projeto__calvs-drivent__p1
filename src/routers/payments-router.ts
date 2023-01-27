@@ -1,10 +1,11 @@
-import { authenticateToken } from "@/middlewares/authentication-middleware";
-import { validateBody } from "@/middlewares/validation-middleware";
-import { CreatePaymentSchema } from "@/schemas/payments-schemas";
+import { postPayment } from "@/controllers";
+import { authenticateToken } from "@/middlewares";
+import { validateBody } from "@/middlewares";
+import { CreatePaymentSchema } from "@/schemas";
 import { Router } from "express";
 
 const paymentsRouter = Router();
 
-paymentsRouter.all("/*", authenticateToken).post("/process", validateBody(CreatePaymentSchema)).get("/");
+paymentsRouter.all("/*", authenticateToken).post("/process", validateBody(CreatePaymentSchema), postPayment).get("/");
 
 export { paymentsRouter };
