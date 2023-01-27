@@ -36,6 +36,9 @@ function createTicket(ticketTypeId: number, enrollmentId: number): Promise<Ticke
       enrollmentId,
       status: TicketStatus.RESERVED,
     },
+    include: {
+      TicketType: true,
+    },
   });
 }
 
