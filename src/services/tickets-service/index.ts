@@ -1,24 +1,53 @@
-import ticketsRepository from "@/repositories/tickets-repository";
-import { Ticket, TicketType } from "@prisma/client";
+import { notFoundError } from "@/errors";
+import ticketRepository from "@/repositories/ticket-repository";
+import enrollmentRepository from "@/repositories/enrollment-repository";
+import { TicketStatus } from "@prisma/client";
 
-async function getTicketTypes(): Promise<TicketType[]> {
-  return await ticketsRepository.getTicketTypes();
+async function getTicketTypes() {
+  const ticketTypes = await ticketRepository.findTicketTypes();
+
+  if (!ticketTypes) {
+    throw notFoundError();
+  }
+  return ticketTypes;
 }
 
-async function getUserTicket(id: number): Promise<Ticket> {
-  return await ticketsRepository.getUserTicket(id);
+async function getTicketByUserId(userId: number) {
+  const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);
+  if (!enrollment) {
+    throw notFoundError();
+  }
+  const ticket = await ticketRepository.findTicketByEnrollmentId(enrollment.id);
+  if (!ticket) {
+    throw notFoundError();
+  }
+
+  return ticket;
 }
 
-async function postTicket(userId: number, ticketTypeId: number): Promise<Ticket> {
-  const enrollmentId = await ticketsRepository.getEnrollmentId(userId);
-  if (!enrollmentId) throw new Error("Not Found");
-  return await ticketsRepository.createTicket(ticketTypeId, enrollmentId.id);
+async function createTicket(userId: number, ticketTypeId: number) {
+  const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);
+  if (!enrollment) {
+    throw notFoundError();
+  }
+
+  const ticketData = {
+    ticketTypeId,
+    enrollmentId: enrollment.id,
+    status: TicketStatus.RESERVED,
+  };
+
+  await ticketRepository.createTicket(ticketData);
+
+  const ticket = await ticketRepository.findTicketByEnrollmentId(enrollment.id);
+
+  return ticket;
 }
 
-const ticketsService = {
+const ticketService = {
   getTicketTypes,
-  getUserTicket,
-  postTicket,
+  getTicketByUserId,
+  createTicket,
 };
 
-export default ticketsService;
+export default ticketService;
