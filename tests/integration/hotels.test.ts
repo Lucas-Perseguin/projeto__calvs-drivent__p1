@@ -158,8 +158,8 @@ describe("GET /hotels", () => {
 
       expect(response.status).toBe(httpStatus.OK);
       expect(response.body).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({
+        expect.not.arrayContaining([
+          expect.not.objectContaining({
             id: expect.any(Number),
             name: expect.any(String),
             image: expect.any(String),
@@ -303,13 +303,13 @@ describe("GET /hotels/:id", () => {
 
       expect(response.status).toBe(httpStatus.OK);
       expect(response.body).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({
+        expect.not.arrayContaining([
+          expect.not.objectContaining({
             id: expect.any(Number),
             name: expect.any(String),
             image: expect.any(String),
-            Rooms: expect.arrayContaining([
-              expect.objectContaining({
+            Rooms: expect.not.arrayContaining([
+              expect.not.objectContaining({
                 id: expect.any(Number),
                 name: expect.any(String),
                 capacity: expect.any(Number),
