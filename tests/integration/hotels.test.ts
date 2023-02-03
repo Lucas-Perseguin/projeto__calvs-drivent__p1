@@ -195,6 +195,14 @@ describe("GET /hotels/:id", () => {
   });
 
   describe("When token is valid", () => {
+    it("Should respond with status 400 if the id param is not a number", async () => {
+      const user = await createUser();
+      const token = await generateValidToken(user);
+
+      const response = await server.get("/hotels/1").set("Authorization", `Bearer ${token}`);
+
+      expect(response.status).toBe(httpStatus.BAD_REQUEST);
+    });
     it("Should respond with status 404 if there is no enrollment for token's user", async () => {
       const user = await createUser();
       const token = await generateValidToken(user);
