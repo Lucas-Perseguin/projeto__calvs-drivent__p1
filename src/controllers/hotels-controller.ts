@@ -11,7 +11,7 @@ export async function getAllHotels(req: AuthenticatedRequest, res: Response): Pr
     return res.status(httpStatus.OK).send(hotels);
   } catch (error) {
     if (error.name === "NotFoundError") return res.sendStatus(httpStatus.NOT_FOUND);
-    if (error.message === "PaymentRequiredError") return res.sendStatus(httpStatus.PAYMENT_REQUIRED);
+    if (error.name === "PaymentRequiredError") return res.sendStatus(httpStatus.PAYMENT_REQUIRED);
     return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
   }
 }
@@ -25,7 +25,7 @@ export async function getHotelWithRooms(req: AuthenticatedRequest, res: Response
     return res.status(httpStatus.OK).send(hotel);
   } catch (error) {
     if (error.name === "NotFoundError") return res.sendStatus(httpStatus.NOT_FOUND);
-    if (error.message === "PaymentRequiredError") return res.sendStatus(httpStatus.PAYMENT_REQUIRED);
+    if (error.name === "PaymentRequiredError") return res.sendStatus(httpStatus.PAYMENT_REQUIRED);
     return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);
   }
 }
