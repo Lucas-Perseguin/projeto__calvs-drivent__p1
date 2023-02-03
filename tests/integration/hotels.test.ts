@@ -199,7 +199,7 @@ describe("GET /hotels/:id", () => {
       const user = await createUser();
       const token = await generateValidToken(user);
 
-      const response = await server.get("/hotels/1").set("Authorization", `Bearer ${token}`);
+      const response = await server.get("/hotels/ola").set("Authorization", `Bearer ${token}`);
 
       expect(response.status).toBe(httpStatus.BAD_REQUEST);
     });
@@ -305,9 +305,9 @@ describe("GET /hotels/:id", () => {
         },
       });
       await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
-      await createHotelWithRooms();
+      const hotel = await createHotelWithRooms();
 
-      const response = await server.get("/hotels/1").set("Authorization", `Bearer ${token}`);
+      const response = await server.get(`/hotels/${hotel.id}`).set("Authorization", `Bearer ${token}`);
 
       expect(response.status).toBe(httpStatus.OK);
       expect(response.body).toEqual(
