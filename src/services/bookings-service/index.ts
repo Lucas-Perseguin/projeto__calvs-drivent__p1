@@ -27,7 +27,10 @@ async function createBooking(
 async function updateBooking(
   roomId: number,
   bookingId: number,
+  userId: number,
 ): Promise<{ id: number } | { message: string } | ApplicationError> {
+  const oldBooking = await bookingRepository.findBookingById(bookingId);
+  if (oldBooking.userId !== userId) throw new Error("Forbidden");
   const room = await bookingRepository.getRoomWithBookings(roomId);
   if (!room) throw notFoundError();
   else if (room.Booking.length >= room.capacity) throw new Error("Forbidden");

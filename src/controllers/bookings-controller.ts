@@ -27,11 +27,12 @@ export async function createBooking(req: AuthenticatedRequest, res: Response): P
 }
 
 export async function updateBooking(req: AuthenticatedRequest, res: Response): Promise<Response<{ id: number }>> {
+  const { userId } = req;
   const { roomId } = req.body;
   const { bookingId } = req.params;
   if (!bookingId || isNaN(Number(bookingId))) return res.sendStatus(httpStatus.BAD_REQUEST);
   try {
-    const booking = await bookingService.updateBooking(roomId, Number(bookingId));
+    const booking = await bookingService.updateBooking(roomId, Number(bookingId), userId);
     return res.status(httpStatus.OK).send(booking);
   } catch (error) {
     if (error.name === "NotFoundError") return res.sendStatus(httpStatus.NOT_FOUND);
