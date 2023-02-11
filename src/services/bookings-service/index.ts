@@ -29,13 +29,14 @@ async function updateBooking(
   bookingId: number,
   userId: number,
 ): Promise<{ id: number } | { message: string } | ApplicationError> {
-  const oldBooking = await bookingRepository.findBookingById(bookingId);
-  if (oldBooking.userId !== userId) throw new Error("Forbidden");
+  const booking = await bookingRepository.findBookingById(bookingId);
+  if (!booking) throw notFoundError();
+  else if (booking.userId !== userId) throw new Error("Forbidden");
   const room = await bookingRepository.getRoomWithBookings(roomId);
   if (!room) throw notFoundError();
   else if (room.Booking.length >= room.capacity) throw new Error("Forbidden");
-  const booking = await bookingRepository.updateBooking(roomId, bookingId);
-  return booking;
+  const updatedBooking = await bookingRepository.updateBooking(roomId, bookingId);
+  return updatedBooking;
 }
 
 const bookingService = {
