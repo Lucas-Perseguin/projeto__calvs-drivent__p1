@@ -15,7 +15,7 @@ async function createBooking(
   roomId: number,
 ): Promise<{ id: number } | { message: string } | ApplicationError> {
   const ticket = await ticketRepository.findTicketByUserId(userId);
-  if (ticket.TicketType.isRemote || !ticket.TicketType.includesHotel || ticket.status === TicketStatus.PAID)
+  if (ticket.TicketType.isRemote || !ticket.TicketType.includesHotel || ticket.status === TicketStatus.RESERVED)
     throw new Error("Forbidden");
   const room = await bookingRepository.getRoomWithBookings(roomId);
   if (!room) throw notFoundError();

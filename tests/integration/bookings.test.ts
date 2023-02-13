@@ -1,5 +1,5 @@
 import supertest from "supertest";
-import app from "@/app";
+import app, { init } from "@/app";
 import httpStatus from "http-status";
 import faker from "@faker-js/faker";
 import jwt from "jsonwebtoken";
@@ -16,6 +16,10 @@ import {
   createBookingWithRoomId,
 } from "../factories";
 import { TicketStatus } from "@prisma/client";
+
+beforeAll(async () => {
+  await init();
+});
 
 beforeEach(async () => {
   await cleanDb();
@@ -56,7 +60,10 @@ describe("POST /booking", () => {
       const ticketType = await createTicketTypeRemote();
       const ticket = await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
 
-      const response = await server.post("/booking").set("Authorization", `Bearer ${token}`);
+      const response = await server
+        .post("/booking")
+        .set("Authorization", `Bearer ${token}`)
+        .send({ roomId: faker.datatype.number() });
 
       expect(response.status).toBe(httpStatus.FORBIDDEN);
     });
@@ -68,7 +75,10 @@ describe("POST /booking", () => {
       const ticketType = await createTicketTypeWithNoHotel();
       const ticket = await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
 
-      const response = await server.post("/booking").set("Authorization", `Bearer ${token}`);
+      const response = await server
+        .post("/booking")
+        .set("Authorization", `Bearer ${token}`)
+        .send({ roomId: faker.datatype.number() });
 
       expect(response.status).toBe(httpStatus.FORBIDDEN);
     });
@@ -80,7 +90,10 @@ describe("POST /booking", () => {
       const ticketType = await createTicketTypeWithHotel();
       const ticket = await createTicket(enrollment.id, ticketType.id, TicketStatus.RESERVED);
 
-      const response = await server.post("/booking").set("Authorization", `Bearer ${token}`);
+      const response = await server
+        .post("/booking")
+        .set("Authorization", `Bearer ${token}`)
+        .send({ roomId: faker.datatype.number() });
 
       expect(response.status).toBe(httpStatus.FORBIDDEN);
     });
@@ -190,8 +203,8 @@ describe("GET /booking", () => {
           id: expect.any(Number),
           Room: expect.objectContaining({
             id: expect.any(Number),
-            userId: expect.any(Number),
-            roomId: expect.any(Number),
+            name: expect.any(String),
+            capacity: expect.any(Number),
           }),
         }),
       );
@@ -230,7 +243,7 @@ describe("PUT /booking/:bookingId", () => {
       const token = await generateValidToken(user);
 
       const response = await server
-        .post("/booking/ola")
+        .put("/booking/ola")
         .set("Authorization", `Bearer ${token}`)
         .send({ roomId: faker.datatype.number() });
 
@@ -245,7 +258,7 @@ describe("PUT /booking/:bookingId", () => {
       const ticket = await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
 
       const response = await server
-        .post("/booking/1")
+        .put("/booking/1")
         .set("Authorization", `Bearer ${token}`)
         .send({ roomId: faker.datatype.number() });
 
@@ -266,7 +279,7 @@ describe("PUT /booking/:bookingId", () => {
       const newToken = await generateValidToken(newUser);
 
       const response = await server
-        .post(`/booking/${booking.id}`)
+        .put(`/booking/${booking.id}`)
         .set("Authorization", `Bearer ${newToken}`)
         .send({ roomId: faker.datatype.number() });
 
@@ -284,7 +297,7 @@ describe("PUT /booking/:bookingId", () => {
       const booking = await createBookingWithRoomId(room.id, user.id);
 
       const response = await server
-        .post(`/booking/${booking.id}`)
+        .put(`/booking/${booking.id}`)
         .set("Authorization", `Bearer ${token}`)
         .send({ roomId: room.id + 1 });
 
@@ -305,7 +318,7 @@ describe("PUT /booking/:bookingId", () => {
       await createBookingWithRoomId(newRoom.id, user.id);
 
       const response = await server
-        .post(`/booking/${booking.id}`)
+        .put(`/booking/${booking.id}`)
         .set("Authorization", `Bearer ${token}`)
         .send({ roomId: newRoom.id });
 
@@ -325,7 +338,7 @@ describe("PUT /booking/:bookingId", () => {
       const newRoom = await createRoomWithHotelIdAndOneCapacity(hotel.id);
 
       const response = await server
-        .post(`/booking/${booking.id}`)
+        .put(`/booking/${booking.id}`)
         .set("Authorization", `Bearer ${token}`)
         .send({ roomId: newRoom.id });
 

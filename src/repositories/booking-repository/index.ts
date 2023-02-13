@@ -6,6 +6,9 @@ function getBooking(userId: number): Promise<Booking> {
     where: {
       userId,
     },
+    include: {
+      Room: true,
+    },
   });
 }
 
